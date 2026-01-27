@@ -1,6 +1,7 @@
 const express = require("express");
 const prisma = require("../prisma");
 const { requireAuth } = require("../middleware/auth");
+const { createStoryBodySchema } = require("../schemas/stories");
 
 const router = express.Router();
 
@@ -10,17 +11,19 @@ const router = express.Router();
 */
 router.post("/", requireAuth, async (req, res) => {
     try {
+        // 인증된 유저의 userId 가져오기
         const userId = req.user.userId;
-        const { title, categories, situation, action, result } = req.body;
 
-        if (!title) {
-            return res.status(400).json({ error: "title is required" });
+        // 요청 바디 검증
+        const parsed = createStoryBodySchema.safeParse(req.body);
+        if (!parsed.success) {
+            return res.status(400).json({
+                error: "Invalid request body",
+                details: parsed.error.issues,
+            });
         }
-
-        if (!Array.isArray(categories) || categories.length === 0) {
-            return res.status(400).json({ error: "At least one category is required" });
-        }
-
+        const { title, categories, situation, action, result } = parsed.data;
+        
         const story = await prisma.story.create({
             data: {
                 userId,

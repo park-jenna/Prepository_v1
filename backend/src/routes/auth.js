@@ -1,7 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const prisma = require("../prisma");
-const { signToken } = require("../utils/jwt");
+const prisma = require("../prisma"); 
+const { signToken } = require("../utils/jwt"); // JWT 발급 함수
+const { authBodySchema } = require("../schemas/auth"); // Zod 스키마
+const { de } = require("zod/v4/locales");
 
 const router = express.Router();
 
@@ -11,11 +13,15 @@ const router = express.Router();
 */
 router.post("/signup", async (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required" });
+        const result = authBodySchema.safeParse(req.body);
+        if (!result.success) {
+            return res.status(400).json({
+                error: "Invalid request body",
+                details: result.error.issues,
+            });
         }
+
+        const { email, password } = result.data;
         
         // 1) 비밀번호 해시
         const hashed = await bcrypt.hash(password, 10);
@@ -43,11 +49,17 @@ router.post("/signup", async (req, res) => {
 */
 router.post("/login/", async (req, res) => {
     try {
-        const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required" });
+        // 스키마로 요청 바디 검증
+        const result = authBodySchema.safeParse(req.body);
+        if (!result.success) {
+            return res.status(400).json({
+                error: "Invalid request body",
+                details: result.error.issues,
+            });
         }
+
+        const { email, password } = result.data;
 
         // 1) 이메일로 유저 찾기
         const user = await prisma.user.findUnique({ where: { email } });
