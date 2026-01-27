@@ -1,5 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const storiesRouter = require("./routes/stories");
+const authRouter = require("./routes/auth");
 
 const app = express();
 
@@ -9,7 +11,9 @@ app.get("/health", (req, res) => {
     res.json({ status: "ok" });
 });
 
-app.use("/stories", storiesRouter);
+// 라우터들 연결
+app.use("/auth", authRouter);   // auth 관련 라우트들 (signup, login)
+app.use("/stories", storiesRouter); // stories 관련 라우트들 
 
 const PORT = 4000;
 app.listen(PORT, () => {

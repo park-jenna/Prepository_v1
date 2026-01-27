@@ -1,5 +1,6 @@
 const express = require("express");
 const prisma = require("../prisma");
+const { requireAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -7,13 +8,10 @@ const router = express.Router();
 * POST /stories
 * Body: { userId, title, categories, situation, action, result }
 */
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
     try {
-        const { userId, title, categories, situation, action, result } = req.body;
-
-        if (!userId) {
-            return res.status(400).json({ error: "userId is required" });
-        }
+        const userId = req.user.userId;
+        const { title, categories, situation, action, result } = req.body;
 
         if (!title) {
             return res.status(400).json({ error: "title is required" });
@@ -34,7 +32,7 @@ router.post("/", async (req, res) => {
             },
         });
 
-        return res.status(201).json(story);
+        return res.status(201).json( {story} );
     } catch (error) {
         console.error("Error creating story:", error);
         return res.status(500).json({ error: "Internal server error" });
@@ -42,15 +40,11 @@ router.post("/", async (req, res) => {
 }); 
 
 /*
-* GET /stories?userId=...
+* GET /stories
 */
-router.get("/", async (req, res) => {
+router.get("/", requireAuth, async (req, res) => {
     try {
-        const { userId } = req.query;
-
-        if (!userId) {
-            return res.status(400).json({ error: "userId query parameter is required" });
-        }
+        const userId = req.user.userId;
 
         const stories = await prisma.story.findMany({
             where: { userId: String(userId) },
