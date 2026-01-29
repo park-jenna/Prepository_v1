@@ -4,8 +4,6 @@ A full-stack web application for creating, organizing, and managing behavioral i
 
 This project is designed as a **production-style CRUD application** with authentication, ownership-based authorization, and a clean separation between frontend, backend, and data layers.
 
----
-
 ## Features
 
 ### Authentication
@@ -28,8 +26,6 @@ This project is designed as a **production-style CRUD application** with authent
 - Edit page with prefilled form values
 - Client-side validation and error handling
 
----
-
 ## Tech Stack
 
 ### Frontend
@@ -50,8 +46,6 @@ This project is designed as a **production-style CRUD application** with authent
 ### Database
 
 - PostgreSQL (Supabase)
-
----
 
 ## Architecture Overview
 
@@ -86,8 +80,6 @@ backend/
 - **Backend routes** enforce authentication and user ownership
 - **Database access** via Prisma with explicit permission checks
 
----
-
 ## Authorization & Security
 
 - JWT tokens are issued on login and stored client-side
@@ -96,8 +88,6 @@ backend/
   - authentication (valid JWT)
   - authorization (story belongs to the logged-in user)
 - Update and delete operations are blocked for non-owners
-
----
 
 ## API Endpoints (Backend)
 
@@ -115,8 +105,6 @@ backend/
 - `DELETE /stories/:id` – delete story
 
 All `/stories` routes require authentication.
-
----
 
 ## Why This Project
 
