@@ -9,17 +9,20 @@ This project is designed as a **production-style CRUD application** with authent
 ## Features
 
 ### Authentication
+
 - JWT-based login
 - Protected API routes using Authorization headers
 - User ownership enforced on all story operations
 
 ### Stories (Full CRUD)
+
 - **Create** new behavioral stories
 - **Read** story list and individual story details
 - **Update** existing stories via an edit page
 - **Delete** stories with confirmation and ownership checks
 
 ### UX
+
 - Dashboard listing all user stories
 - Story detail page with Edit / Delete actions
 - Edit page with prefilled form values
@@ -30,6 +33,7 @@ This project is designed as a **production-style CRUD application** with authent
 ## Tech Stack
 
 ### Frontend
+
 - **Next.js (App Router)**
 - React
 - TypeScript
@@ -37,17 +41,21 @@ This project is designed as a **production-style CRUD application** with authent
 - Client Components for forms and interactions
 
 ### Backend
+
 - **Node.js**
 - **Express**
 - JWT authentication
 - Prisma ORM
 
 ### Database
+
 - PostgreSQL (Supabase)
 
 ---
 
 ## Architecture Overview
+
+```text
 frontend/
  ├─ app/
  │   ├─ login/
@@ -70,8 +78,9 @@ backend/
  │   └─ utils/
  │       └─ jwt.js
  └─ prisma/
+```
 
- - **API layer (`api.ts`)**: handles HTTP methods, headers, and error handling
+- **API layer (`api.ts`)**: handles HTTP methods, headers, and error handling
 - **Domain layer (`stories.ts`)**: abstracts story-related API calls
 - **UI layer**: Next.js App Router pages
 - **Backend routes** enforce authentication and user ownership
@@ -93,10 +102,12 @@ backend/
 ## API Endpoints (Backend)
 
 ### Auth
+
 - `POST /auth/signup` – create user (API only, no public signup UI)
 - `POST /auth/login` – login and receive JWT
 
 ### Stories
+
 - `POST /stories` – create story
 - `GET /stories` – list user stories
 - `GET /stories/:id` – get story detail
@@ -108,11 +119,10 @@ All `/stories` routes require authentication.
 ---
 
 ## Why This Project
+
 This project was built to demonstrate:
+
 - Full-stack CRUD workflows
 - JWT-based authentication and authorization
 - Ownership-based data access control
-- Practical Next.js + Express integeration
-
-
-
+- Practical Next.js + Express integration
