@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { login } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-    
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -25,13 +26,15 @@ export default function LoginPage() {
         try {
             // 로그인 API 호출
             // 성공하면 {user, token} 형태의 응답을 받음
-            const data = await login(email, password);
+            const data = await login(email, password);  // {user, token}
 
-            // 토큰을 로컬 스토리지에 저장
+            // 1) 토큰을 로컬 스토리지에 저장
             localStorage.setItem("token", data.token);
+            // 2) redirect
+            router.replace("/dashboard");
 
-            setSuccessMsg(`Logged in as ${data.user.email}`);
-            console.log("Login successful:", data);
+            //setSuccessMsg(`Logged in as ${data.user.email}`);
+            //console.log("Login successful:", data);
         } catch (err) {
             const msg = err instanceof Error ? err.message : "Login failed";
             setError(msg);
