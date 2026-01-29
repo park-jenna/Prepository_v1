@@ -8,41 +8,68 @@ export default function HomePage() {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    setHasToken(!!localStorage.getItem("token"));
+    const token = localStorage.getItem("token");
+    setHasToken(!!token);
   }, []);
 
   return (
-    <main style={{ maxWidth: 720, margin: "60px auto", padding: 16 }}>
-      <h1 style={{ fontSize: 32, fontWeight: 900 }}>Prepository</h1>
-      <p style={{ marginTop: 10, color: "#555" }}>
-        Store and refine behavioral interview stories using the STAR framework.
-      </p>
+    <main style={{ marginTop: 56 }}>
+      <header style={{ maxWidth: 720 }}>
+        <h1 style={{ fontSize: 42, fontWeight: 900, margin: 0 }}>
+          Prepository
+        </h1>
 
-      <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+        <p className="muted" style={{ marginTop: 14, fontSize: 18 }}>
+          A personal workspace for organizing behavioral interview stories
+          using the STAR framework.
+        </p>
+      </header>
+
+      {/* What this app does */}
+      <section className="card" style={{ marginTop: 36, maxWidth: 720 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
+          What you can do
+        </h2>
+
+        <ul className="muted" style={{ marginTop: 12, paddingLeft: 18 }}>
+          <li>Create and save behavioral interview stories</li>
+          <li>Structure answers using the STAR framework</li>
+          <li>Edit and refine responses over time</li>
+          <li>Securely manage your own data with login</li>
+        </ul>
+      </section>
+
+      {/* Demo & Access */}
+      <section className="card" style={{ marginTop: 16, maxWidth: 720 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
+          Demo & Access
+        </h2>
+
+        <p className="muted" style={{ marginTop: 10 }}>
+          This is a demo project built for learning and portfolio purposes.
+        </p>
+
+        <p className="muted" style={{ marginTop: 6 }}>
+          User accounts are created via the backend API
+          (<code>/auth/signup</code>).
+        </p>
+      </section>
+
+      {/* Action */}
+      <div style={{ marginTop: 36, display: "flex", gap: 12 }}>
         {hasToken ? (
-          <>
-            <button
-              onClick={() => router.push("/dashboard")}
-              style={{ padding: 10, borderRadius: 10, border: "1px solid #111", background: "#111", color: "#fff", fontWeight: 700 }}
-            >
-              Continue to Dashboard
-            </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem("token");
-                setHasToken(false);
-              }}
-              style={{ padding: 10, borderRadius: 10, border: "1px solid #111", fontWeight: 700 }}
-            >
-              Log out
-            </button>
-          </>
+          <button
+            className="btn btn-primary"
+            onClick={() => router.push("/dashboard")}
+          >
+            Go to Dashboard
+          </button>
         ) : (
           <button
+            className="btn btn-primary"
             onClick={() => router.push("/login")}
-            style={{ padding: 10, borderRadius: 10, border: "1px solid #111", background: "#111", color: "#fff", fontWeight: 700 }}
           >
-            Go to Login
+            Log In to Continue
           </button>
         )}
       </div>

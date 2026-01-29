@@ -27,7 +27,7 @@ export default function StoryDetailPage() {
                 const token = localStorage.getItem("token");
                 if (!token) {
                     setError("No token found. Please log in again.");
-                    router.push("/login");
+                    router.replace("/login");
                     return;
                 }
 
@@ -49,127 +49,121 @@ export default function StoryDetailPage() {
         }
         
         load();
-    }, [storyId]);
+    }, [storyId, router]);
 
-    // loading
     if (loading) {
         return (
-            <main style={{ maxWidth: 800, margin: "40px auto", padding: 16 }}>
-                <p>Loading story...</p>
+            <main style={{ marginTop: 32 }}>
+                <p className="muted">Loading story...</p>
             </main>
         );
     }
 
-    // error
     if (error) {
         return (
-            <main style={{ maxWidth: 800, margin: "40px auto", padding: 16 }}>
-                <p style={{ color: "crimson" }}>Error: {error}</p>
-                <button
-                    onClick={() => router.push("/dashboard")}
-                    style={{ marginTop: 16, padding: "8px 16px", borderRadius: 4 }}
-                >
-                    Back to Dashboard
-                </button>
+            <main style={{ marginTop: 32 }}>
+                <div className="card" style={{ borderColor: "rgba(220, 38, 38, 0.35)" }}>
+                    <p style={{ color: "crimson", margin: 0 }}>Error: {error}</p>
+                </div>
+
+                <div style={{ marginTop: 14 }}>
+                    <button className="btn" onClick={() => router.push("/dashboard")}>
+                        ← Back to Dashboard
+                    </button>
+                </div>
             </main>
         );
     }
 
-    // story not found
     if (!story) {
         return (
-            <main style={{ maxWidth: 800, margin: "40px auto", padding: 16 }}>
-                <p>Story not found.</p>
-                <button
-                    onClick={() => router.push("/dashboard")}
-                    style={{ marginTop: 16, padding: "8px 16px", borderRadius: 4 }}
-                >
-                    Back to Dashboard
-                </button>
+            <main style={{ marginTop: 32 }}>
+                <div className="card">
+                    <p style={{ margin: 0 }}>Story not found.</p>
+                </div>
+
+                <div style={{ marginTop: 14 }}>
+                    <button className="btn" onClick={() => router.push("/dashboard")}>
+                        ← Back to Dashboard
+                    </button>
+                </div>
             </main>
         );
     }
 
-    // story display 
     return (
-        <main style={{ maxWidth: 800, margin: "40px auto", padding: 16 }}>
-            <button 
-                onClick={() => router.push("/dashboard")}
-                style={{ marginBottom: 16, padding: "8px 16px", borderRadius: 10, border: "1px solid #ccc" }}
-            >
-                &larr; Back to Dashboard
-            </button>
+        <main style={{ marginTop: 32 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+                <button className="btn" onClick={() => router.push("/dashboard")}>
+                    ← Back to Dashboard
+                </button>
 
-            <button
-                onClick={() => router.push(`/stories/${story.id}/edit`)}
-                style={{
-                    marginLeft: 16,
-                    padding: "8px 16px",
-                    borderRadius: 10,
-                    border: "1px solid #333",
-                    backgroundColor: "white",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                }}      
-            >
-                Edit Story
-            </button>
-            
-            <button
-                onClick={async () => {
-                    const ok = confirm("Are you sure you want to delete this story?");
-                    if (!ok) return;
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    <button
+                        className="btn"
+                        onClick={() => router.push(`/stories/${story.id}/edit`)}
+                    >
+                        Edit
+                    </button>
 
-                    try {
-                        const token = localStorage.getItem("token");
-                        if (!token) throw new Error("No token found. Please log in again.");
+                    <button
+                        className="btn btn-danger"
+                        onClick={async () => {
+                            const ok = confirm("Are you sure you want to delete this story?");
+                            if (!ok) return;
 
-                        await deleteStoryById(token, story.id);
-                        router.push("/dashboard");
-                    } catch (err) {
-                        alert(err instanceof Error ? err.message : "Failed to delete story.");
-                    }
-                }}
-                style={{
-                    marginLeft: 16,
-                    padding: "8px 16px",
-                    borderRadius: 10,
-                    border: "1px solid crimson",
-                    backgroundColor: "white",
-                    color: "crimson",
-                    fontWeight: 700,
-                }}      
-            >
-                Delete Story
-            </button>
+                            try {
+                                const token = localStorage.getItem("token");
+                                if (!token) throw new Error("No token found. Please log in again.");
 
-
-            
-
-            <h1 style={{ fontSize: 28, fontWeight: "bold", marginBottom: 12 }}>{story.title}</h1>
-            
-            <div style={{ marginTop: 8, color: "#555" }}>
-                <strong>Categories:</strong> {story.categories.join(', ')}<br />
+                                await deleteStoryById(token, story.id);
+                                router.push("/dashboard");
+                            } catch (err) {
+                                alert(err instanceof Error ? err.message : "Failed to delete story.");
+                            }
+                        }}
+                    >
+                        Delete
+                    </button>
+                </div>
             </div>
 
-            <div style={{ marginTop: 8, color: "#777", fontSize: 14 }}>
-                Created: {new Date(story.createdAt).toLocaleDateString()}
-            </div>
+            <header style={{ marginTop: 22 }}>
+                <h1 style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>{story.title}</h1>
 
-            <section style={{ marginTop: 24, display: "grid", gap: 16 }}>
-                <div style={{ border: "1px solid #ddd", borderRadius: 8, padding: 16 }}>
-                    <div style={{ fontWeight: "700" }}>Situation</div>
-                    <p style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>{story.situation || "No situation provided."}</p>
+                <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {story.categories.map((c) => (
+                        <span key={c} className="badge">
+                            {c}
+                        </span>
+                    ))}
                 </div>
 
-                <div style={{ border: "1px solid #ddd", borderRadius: 8, padding: 16 }}>
-                    <div style={{ fontWeight: "700" }}>Action</div>
-                    <p style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>{story.action || "No action provided."}</p>
+                <p className="muted" style={{ marginTop: 10, marginBottom: 0, fontSize: 14 }}>
+                    Created: {new Date(story.createdAt).toLocaleDateString()}
+                </p>
+            </header>
+
+            <section style={{ marginTop: 18, display: "grid", gap: 12 }}>
+                <div className="card">
+                    <div style={{ fontWeight: 800 }}>Situation</div>
+                    <p className="muted" style={{ marginTop: 8, marginBottom: 0, whiteSpace: "pre-wrap" }}>
+                        {story.situation || "No situation provided."}
+                    </p>
                 </div>
 
-                <div style={{ border: "1px solid #ddd", borderRadius: 8, padding: 16 }}>
-                    <div style={{ fontWeight: "700" }}>Result</div>
-                    <p style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>{story.result || "No result provided."}</p>
+                <div className="card">
+                    <div style={{ fontWeight: 800 }}>Action</div>
+                    <p className="muted" style={{ marginTop: 8, marginBottom: 0, whiteSpace: "pre-wrap" }}>
+                        {story.action || "No action provided."}
+                    </p>
+                </div>
+
+                <div className="card">
+                    <div style={{ fontWeight: 800 }}>Result</div>
+                    <p className="muted" style={{ marginTop: 8, marginBottom: 0, whiteSpace: "pre-wrap" }}>
+                        {story.result || "No result provided."}
+                    </p>
                 </div>
             </section>
         </main>

@@ -7,7 +7,7 @@
 
 "use client";
 
-import React, { use, useState } from 'react';
+import React, { useState } from "react";
 import { useRouter } from 'next/navigation';        
 import { createStory } from '@/lib/stories';
 
@@ -76,93 +76,96 @@ export default function NewStoryPage() {
         }
     }
 
-        return (
-        <main style={{ maxWidth: 600, margin: "40px auto", padding: 16 }}>
-            <h1 style={{ fontSize: 24, fontWeight: "bold", marginBottom: 24 }}>New Story</h1>
-            <p style={{ color: "#666", marginBottom: 24 }}>
-                Create a new behavioral interview story. Use commas to add multiple categories.
-            </p>
+    return (
+        <main style={{ marginTop: 32 }}>
+            <header>
+                <h1 style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>New Story</h1>
+                <p className="muted" style={{ marginTop: 10, marginBottom: 0 }}>
+                    Create a new behavioral interview story. Use commas to add multiple categories.
+                </p>
+            </header>
 
-            <form onSubmit={handleSubmit} style={{ display: "grid", gap: 16 }}>
+            <form
+                onSubmit={handleSubmit}
+                className="card"
+                style={{ marginTop: 20, display: "grid", gap: 14, maxWidth: 720 }}
+            >
                 {/* Title */}
                 <label style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontWeight: "600" }}>Title *</span>
+                    <span style={{ fontWeight: 700 }}>Title *</span>
                     <input
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="E.g., Leading a team project"
-                        style={{ padding: 10, border: "1px solid #ccc", borderRadius: 8 }}
                         required
                     />
                 </label>
 
                 {/* Categories */}
                 <label style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontWeight: "600" }}>Categories * (comma-separated)</span>
+                    <span style={{ fontWeight: 700 }}>Categories * (comma-separated)</span>
                     <input
                         value={categoriesText}
                         onChange={(e) => setCategoriesText(e.target.value)}
                         placeholder="E.g., Leadership, Conflict"
-                        style={{ padding: 10, border: "1px solid #ccc", borderRadius: 8 }}
                     />
                 </label>
 
                 {/* Situation */}
                 <label style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontWeight: "600" }}>Situation</span>
+                    <span style={{ fontWeight: 700 }}>Situation</span>
                     <textarea
                         value={situation}
                         onChange={(e) => setSituation(e.target.value)}
                         placeholder="What was the context?"
                         rows={3}
-                        style={{ padding: 10, border: "1px solid #ccc", borderRadius: 8, minHeight: 80 }}
                     />
                 </label>
 
                 {/* Action */}
                 <label style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontWeight: "600" }}>Action</span>
+                    <span style={{ fontWeight: 700 }}>Action</span>
                     <textarea
                         value={action}
                         onChange={(e) => setAction(e.target.value)}
                         placeholder="What did you do?"
                         rows={3}
-                        style={{ padding: 10, border: "1px solid #ccc", borderRadius: 8, minHeight: 80 }}
                     />
                 </label>
 
                 {/* Result */}
                 <label style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontWeight: "600" }}>Result</span>
+                    <span style={{ fontWeight: 700 }}>Result</span>
                     <textarea
                         value={result}
                         onChange={(e) => setResult(e.target.value)}
                         placeholder="What was the outcome?"
                         rows={3}
-                        style={{ padding: 10, border: "1px solid #ccc", borderRadius: 8, minHeight: 80 }}
                     />
                 </label>
 
                 {/* Error Message */}
                 {error && <p style={{ color: "crimson", margin: 0 }}>{error}</p>}
 
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    disabled={loading}
-                    style={{
-                        padding: 12,
-                        borderRadius: 8,
-                        border: "1px solid #111",
-                        background: loading ? "#eee" : "#111",
-                        color: loading ? "#111" : "#fff",
-                        cursor: loading ? "not-allowed" : "pointer",
-                        fontWeight: "700",
-                    }}
-                >
-                    {loading ? "Saving..." : "Create Story"}
-                </button>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4 }}>
+                    <button className="btn btn-primary" type="submit" disabled={loading}>
+                        {loading ? "Saving..." : "Create Story"}
+                    </button>
+
+                    <button
+                        className="btn"
+                        type="button"
+                        onClick={() => router.push("/dashboard")}
+                        disabled={loading}
+                    >
+                        Cancel
+                    </button>
+                </div>
+
+                <p className="muted" style={{ margin: 0, fontSize: 13 }}>
+                    Tip: Use commas in Categories to add multiple tags (e.g., <code>Leadership, Conflict</code>).
+                </p>
             </form>
         </main>
     );
-}   
+}  

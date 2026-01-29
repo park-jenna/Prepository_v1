@@ -26,7 +26,7 @@ export default function DashboardPage() {
                 // 2) token 이 없으면 로그인 페이지로 리다이렉트
                 if (!token) {
                     setError("No token found. Please log in again.");
-                    window.location.href = "/login";
+                    router.replace("/login");
                     return;
                 }
 
@@ -47,56 +47,100 @@ export default function DashboardPage() {
     }, []);
 
     return (
-        <main style={{ maxWidth: 800, margin: "40px auto", padding: 16 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                <h1 style={{ fontSize: 24, fontWeight: "bold" }}>My Stories</h1>
-                
-                <button
-                    onClick={() => router.push("/stories/new")}
-                    style={{
-                        padding: "8px 16px",
-                        fontSize: 14,
-                        fontWeight: "bold",
-                        color: "#fff",
-                        backgroundColor: "#0070f3",
-                        border: "none",
-                        borderRadius: 6,
-                        cursor: "pointer",
-                    }}
-                >
-                    Add Story
-                </button>
-            </div>
-            
-            {loading && <p>Loading stories...</p>}
+      <main style={{ marginTop: 32 }}>
+        <header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            gap: 16,
+          }}
+        >
+          <div>
+            <h1 style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>My Stories</h1>
+            <p className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
+              Create, refine, and reuse STAR stories for behavioral interviews.
+            </p>
+          </div>
 
-            {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              className="btn"
+              onClick={() => {
+                localStorage.removeItem("token");
+                router.replace("/login");
+              }}
+            >
+              Log out
+            </button>
 
-            {!loading && !error && stories.length === 0 && (
-                <p>No stories yet. Go create one!</p>
-            )}
+            <button
+              className="btn btn-primary"
+              onClick={() => router.push("/stories/new")}
+            >
+              + Add Story
+            </button>
+          </div>
+        </header>
 
-            {!loading && !error && stories.length > 0 && (
-                <ul style={{ marginTop: 16, display: "grid", gap: 12, padding: 0, listStyle: "none" }}>
-                    {stories.map((s) => (
-                        <li key={s.id} style={{ border: "1px solid #ddd", borderRadius: 12, padding: 16 }}>
-                            <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>
-                                <Link href={`/stories/${s.id}`} style={{ textDecoration: "none", color: "#333" }}>
-                                    {s.title}
-                                </Link>
-                            </div>
+        {loading && <p className="muted" style={{ marginTop: 18 }}>Loading stories...</p>}
 
-                            <div style={{ fontSize: 14, color: "#555" }}>
-                                {s.categories.join(', ')}
-                            </div>
+        {error && (
+          <div className="card" style={{ marginTop: 18, borderColor: "rgba(220, 38, 38, 0.35)" }}>
+            <p style={{ color: "crimson", margin: 0 }}>Error: {error}</p>
+          </div>
+        )}
 
-                            <div style={{ fontSize: 12, marginTop: 12, color: "#888" }}>
-                                {new Date(s.createdAt).toLocaleDateString()}
-                            </div>
-                        </li>   
-                    ))}
-                </ul>
-            )}
-        </main>
+        {!loading && !error && stories.length === 0 && (
+          <div className="card" style={{ marginTop: 18 }}>
+            <p style={{ margin: 0 }}>No stories yet.</p>
+            <p className="muted" style={{ marginTop: 6, marginBottom: 0 }}>
+              Click <strong>+ Add Story</strong> to create your first one.
+            </p>
+          </div>
+        )}
+
+        {!loading && !error && stories.length > 0 && (
+          <ul
+            style={{
+              marginTop: 18,
+              display: "grid",
+              gap: 12,
+              padding: 0,
+              listStyle: "none",
+            }}
+          >
+            {stories.map((s) => (
+              <li key={s.id} className="card" style={{ display: "grid", gap: 10 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                  <div style={{ minWidth: 0 }}>
+                    <Link
+                      href={`/stories/${s.id}`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <span style={{ fontWeight: 800, fontSize: 18 }}>{s.title}</span>
+                    </Link>
+                    <div className="muted" style={{ fontSize: 13, marginTop: 6 }}>
+                      {new Date(s.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+
+                  <Link href={`/stories/${s.id}`} style={{ textDecoration: "none" }}>
+                    <span className="btn">View</span>
+                  </Link>
+                </div>
+
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {s.categories.map((c) => (
+                    <span key={c} className="badge">
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </main>
     );
 }
