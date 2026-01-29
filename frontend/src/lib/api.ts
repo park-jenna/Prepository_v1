@@ -17,3 +17,21 @@ export async function apiPost<T>(endpoint: string, body: unknown): Promise<T> {
 
     return data as T;
 }
+
+export async function apiGet<T>(endpoint: string, token?: string): Promise<T> {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: "GET",
+        // token 이 제공된 경우에만 Authorization 헤더 추가
+        // 제공되지 않은 경우 headers 필드를 undefined 로 설정
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+        const msg = data?.error ?? `Error ${res.status}`;
+        throw new Error(msg);
+    }
+
+    return data as T;
+}   

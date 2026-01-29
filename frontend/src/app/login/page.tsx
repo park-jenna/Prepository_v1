@@ -26,6 +26,10 @@ export default function LoginPage() {
             // 로그인 API 호출
             // 성공하면 {user, token} 형태의 응답을 받음
             const data = await login(email, password);
+
+            // 토큰을 로컬 스토리지에 저장
+            localStorage.setItem("token", data.token);
+
             setSuccessMsg(`Logged in as ${data.user.email}`);
             console.log("Login successful:", data);
         } catch (err) {
