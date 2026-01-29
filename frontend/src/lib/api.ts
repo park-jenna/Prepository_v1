@@ -86,3 +86,34 @@ export async function apiDelete<T>(
 
     return data as T;
 }
+
+// PATCH 요청에 대한 공통 함수
+// 리소스의 일부를 업데이트할 때 사용
+export async function apiPatch<T>(
+    endpoint: string,
+    body: unknown,
+    options?: { token?: string }
+): Promise<T> {
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+    };
+
+    if (options?.token) {
+        headers["Authorization"] = `Bearer ${options.token}`;
+    }
+
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(body),
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+        const msg = data?.error ?? `Error ${res.status}`;
+        throw new Error(msg);
+    }
+
+    return data as T;
+}

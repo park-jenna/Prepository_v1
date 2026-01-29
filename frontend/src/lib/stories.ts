@@ -2,7 +2,7 @@
 // 도메인/API layer (업무 로직)
 // 어떤 API 를 호출할지 결정
 // 스토리 관련 API 호출 함수들
-import { apiGet, apiPost, apiDelete } from "./api"; 
+import { apiGet, apiPost, apiDelete, apiPatch } from "./api"; 
 
 // prisma 스키마 기반 스토리 타입
 export type Story = {
@@ -44,6 +44,8 @@ export async function createStory(token: string, input: CreateStoryInput) {
 }
 
 /////////////////////////////////////////////
+/////////////////////////////////////////////
+
 // 호출 API: GET /stories/:id
 export type StoryResponse = {
     story: Story;
@@ -53,11 +55,28 @@ export async function fetchStoryById(token: string, storyId: string) {
     return apiGet<StoryResponse>(`/stories/${storyId}`, token);
 }
 
+///////////////////////////////////////////
 /////////////////////////////////////////////
+
 // 호출 API: DELETE /stories/:id
 export type DeleteStoryResponse = { ok: true };
 
 // ID 로 스토리 삭제하기
 export async function deleteStoryById(token: string, storyId: string) {
     return apiDelete<DeleteStoryResponse>(`/stories/${storyId}`, { token });
+}
+
+////////////////////////////////////////////
+/////////////////////////////////////////////
+export type UpdateStoryInput = {
+    // optional fields for partial update
+    title?: string;
+    categories?: string[];
+    situation?: string;
+    action?: string;
+    result?: string;
+};
+// 호출 API: PATCH /stories/:id
+export async function updateStoryById(token: string, storyId: string, input: UpdateStoryInput) {
+    return apiPatch<StoryResponse>(`/stories/${storyId}`, input, { token }); 
 }
