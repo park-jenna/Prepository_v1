@@ -99,6 +99,21 @@ export default function StoryDetailPage() {
             >
                 &larr; Back to Dashboard
             </button>
+
+            <button
+                onClick={() => router.push(`/stories/${story.id}/edit`)}
+                style={{
+                    marginLeft: 16,
+                    padding: "8px 16px",
+                    borderRadius: 10,
+                    border: "1px solid #333",
+                    backgroundColor: "white",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                }}      
+            >
+                Edit Story
+            </button>
             
             <button
                 onClick={async () => {
@@ -127,6 +142,8 @@ export default function StoryDetailPage() {
             >
                 Delete Story
             </button>
+
+
             
 
             <h1 style={{ fontSize: 28, fontWeight: "bold", marginBottom: 12 }}>{story.title}</h1>
