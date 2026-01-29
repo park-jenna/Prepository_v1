@@ -56,21 +56,27 @@ export default function HomePage() {
       </section>
 
       {/* Action */}
-      <div style={{ marginTop: 36, display: "flex", gap: 12 }}>
+      <div style={{ marginTop: 36, display: "flex", gap: 12, flexWrap: "wrap" }}>
         {hasToken ? (
-          <button
-            className="btn btn-primary"
+          <button className="btn btn-primary"
             onClick={() => router.push("/dashboard")}
           >
             Go to Dashboard
           </button>
         ) : (
-          <button
-            className="btn btn-primary"
-            onClick={() => router.push("/login")}
-          >
-            Log In to Continue
-          </button>
+          <>
+            <button className="btn btn-primary"
+              onClick={() => router.push("/login")}
+            >
+              Log In to Continue
+            </button>
+
+            <button className="btn btn-primary"
+              onClick={() => router.push("/signup")}
+            >
+              Sign Up
+            </button> 
+          </>
         )}
       </div>
     </main>
