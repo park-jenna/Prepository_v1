@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchStories, Story } from "@/lib/stories";
+import Link from "next/link";
 
 export default function DashboardPage() {
     const [stories, setStories] = useState<Story[]>([]);
@@ -59,7 +60,11 @@ export default function DashboardPage() {
                 <ul style={{ marginTop: 16, display: "grid", gap: 12, padding: 0, listStyle: "none" }}>
                     {stories.map((s) => (
                         <li key={s.id} style={{ border: "1px solid #ddd", borderRadius: 12, padding: 16 }}>
-                            <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{s.title}</div>
+                            <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>
+                                <Link href={`/stories/${s.id}`} style={{ textDecoration: "none", color: "#333" }}>
+                                    {s.title}
+                                </Link>
+                            </div>
 
                             <div style={{ fontSize: 14, color: "#555" }}>
                                 {s.categories.join(', ')}

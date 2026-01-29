@@ -61,4 +61,30 @@ router.get("/", requireAuth, async (req, res) => {
     }
 });
 
+// GET /stories/:id
+// 특정 스토리 가져오기
+router.get("/:id", requireAuth, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { id } = req.params;
+
+        // userId 와 id 로 스토리 찾기
+        const story = await prisma.story.findFirst({
+            where: { 
+                id,
+                userId,
+             },
+        });
+
+        if (!story) {
+            return res.status(404).json({ error: "Story not found" });
+        }
+
+        return res.json({ story });
+    } catch (error) {
+        console.error("Error fetching story:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 module.exports = router;
