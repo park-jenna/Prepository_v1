@@ -58,4 +58,31 @@ export async function apiGet<T>(endpoint: string, token?: string): Promise<T> {
     }
 
     return data as T;
-}   
+} 
+
+// DELETE 요청에 대한 공통 함수
+export async function apiDelete<T>(
+    endpoint: string,
+    options?: { token?: string }
+): Promise<T> {
+    const headers: Record<string, string> = {};
+
+    if (options?.token) {
+        headers["Authorization"] = `Bearer ${options.token}`;
+    }
+
+    // DELETE 요청 수행
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: "DELETE",
+        headers,
+    });
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+        const msg = data?.error ?? `Error ${res.status}`;
+        throw new Error(msg);
+    }
+
+    return data as T;
+}

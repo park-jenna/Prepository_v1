@@ -87,4 +87,37 @@ router.get("/:id", requireAuth, async (req, res) => {
     }
 });
 
+/*
+* DELETE /stories/:id
+* 특정 스토리 삭제 (본인 것만)
+*/
+router.delete("/:id", requireAuth, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { id } = req.params;
+        
+        // 1) 스토리 존재 확인
+        // 본인 것인지도 같이 확인 -> findFirst
+        const story = await prisma.story.findFirst({
+            where: { id, userId },
+            select: { id: true },
+        });
+
+        if (!story) {
+            return res.status(404).json({ error: "Story not found" });
+        }
+
+        // 2) 스토리 삭제
+        await prisma.story.delete({
+            where: { id },
+        });
+
+        // 3) 응답
+        return res.json({ ok: true });
+    } catch (error) {
+        console.error("Error deleting story:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 module.exports = router;

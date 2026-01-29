@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { fetchStoryById, Story } from "@/lib/stories";
+import { fetchStoryById, Story, deleteStoryById } from "@/lib/stories";
 
 export default function StoryDetailPage() {
     const router = useRouter();
@@ -99,6 +99,35 @@ export default function StoryDetailPage() {
             >
                 &larr; Back to Dashboard
             </button>
+            
+            <button
+                onClick={async () => {
+                    const ok = confirm("Are you sure you want to delete this story?");
+                    if (!ok) return;
+
+                    try {
+                        const token = localStorage.getItem("token");
+                        if (!token) throw new Error("No token found. Please log in again.");
+
+                        await deleteStoryById(token, story.id);
+                        router.push("/dashboard");
+                    } catch (err) {
+                        alert(err instanceof Error ? err.message : "Failed to delete story.");
+                    }
+                }}
+                style={{
+                    marginLeft: 16,
+                    padding: "8px 16px",
+                    borderRadius: 10,
+                    border: "1px solid crimson",
+                    backgroundColor: "white",
+                    color: "crimson",
+                    fontWeight: 700,
+                }}      
+            >
+                Delete Story
+            </button>
+            
 
             <h1 style={{ fontSize: 28, fontWeight: "bold", marginBottom: 12 }}>{story.title}</h1>
             
