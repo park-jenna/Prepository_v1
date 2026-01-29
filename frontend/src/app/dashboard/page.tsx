@@ -8,8 +8,10 @@
 import { useEffect, useState } from "react";
 import { fetchStories, Story } from "@/lib/stories";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+    const router = useRouter();
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -46,8 +48,26 @@ export default function DashboardPage() {
 
     return (
         <main style={{ maxWidth: 800, margin: "40px auto", padding: 16 }}>
-            <h1 style={{ fontSize: 24, fontWeight: "bold", marginBottom: 24 }}>Dashboard</h1>
-
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                <h1 style={{ fontSize: 24, fontWeight: "bold" }}>My Stories</h1>
+                
+                <button
+                    onClick={() => router.push("/stories/new")}
+                    style={{
+                        padding: "8px 16px",
+                        fontSize: 14,
+                        fontWeight: "bold",
+                        color: "#fff",
+                        backgroundColor: "#0070f3",
+                        border: "none",
+                        borderRadius: 6,
+                        cursor: "pointer",
+                    }}
+                >
+                    Add Story
+                </button>
+            </div>
+            
             {loading && <p>Loading stories...</p>}
 
             {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
