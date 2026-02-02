@@ -10,13 +10,14 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';        
 import { createStory } from '@/lib/stories';
+import { CATEGORIES } from "@/constants/categories";
 
 export default function NewStoryPage() {
     const router = useRouter();
 
     // 폼 입력값을 위한 state
     const [title, setTitle] = useState("");
-    const [categoriesText, setCategoriesText] = useState("");
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [situation, setSituation] = useState("");
     const [action, setAction] = useState("");
     const [result, setResult] = useState("");
@@ -24,6 +25,12 @@ export default function NewStoryPage() {
     // 로딩/에러 상태 관리
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    function toggleCategory(category: string, checked: boolean) {
+        setSelectedCategories((prev) => {
+            return checked ? [...prev, category] : prev.filter((c) => c !== category);
+        });
+    }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -44,12 +51,8 @@ export default function NewStoryPage() {
                 throw new Error("Title is required.");
             }
 
-            // 3) categories 를 쉼표로 분리하여 배열로 변환
-            const categories = categoriesText
-                .split(",")
-                .map((cat) => cat.trim())
-                .filter(Boolean); // 빈 문자열 제거
-
+            // 3) categories 선택 확인
+            const categories = selectedCategories;
             if (categories.length === 0) {
                 throw new Error("At least one category is required.");
             }
@@ -81,7 +84,7 @@ export default function NewStoryPage() {
             <header>
                 <h1 style={{ fontSize: 32, fontWeight: 900, margin: 0 }}>New Story</h1>
                 <p className="muted" style={{ marginTop: 10, marginBottom: 0 }}>
-                    Create a new behavioral interview story. Use commas to add multiple categories.
+                    Create a new behavioral interview story. Select one or more categories that best describe your story.
                 </p>
             </header>
 
@@ -102,14 +105,35 @@ export default function NewStoryPage() {
                 </label>
 
                 {/* Categories */}
-                <label style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontWeight: 700 }}>Categories * (comma-separated)</span>
-                    <input
-                        value={categoriesText}
-                        onChange={(e) => setCategoriesText(e.target.value)}
-                        placeholder="E.g., Leadership, Conflict"
-                    />
-                </label>
+                <div style={{ display: "grid", gap: 6 }}>
+                    <span style={{ fontWeight: 700 }}>Categories *</span>
+
+                    <div style={{ display:"flex", flexWrap: "wrap", gap: 12 }}>
+                        {CATEGORIES.map((category) => {
+                            const selected = selectedCategories.includes(category);
+
+                            return (
+                                <label 
+                                    key={category} 
+                                    className={`chip ${selected ? "chip-selected" : ""}`}
+                                    style={{ cursor: "pointer" }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selected}
+                                        onChange={(e) => toggleCategory(category, e.target.checked)}
+                                        style={{ display: "none" }}
+                                    />
+                                    {category}
+                                </label>
+                            );
+                        })}
+                    </div>
+
+                    <p className="muted" style={{ margin: 0, fontSize: 13 }}>
+                        Select one or more categories that best describe your story.
+                    </p>
+                </div>
 
                 {/* Situation */}
                 <label style={{ display: "grid", gap: 6 }}>
@@ -163,7 +187,7 @@ export default function NewStoryPage() {
                 </div>
 
                 <p className="muted" style={{ margin: 0, fontSize: 13 }}>
-                    Tip: Use commas in Categories to add multiple tags (e.g., <code>Leadership, Conflict</code>).
+                    Tip: After creating the story, you can further edit and enhance it in the dashboard.
                 </p>
             </form>
         </main>
