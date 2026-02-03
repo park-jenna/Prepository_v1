@@ -5,16 +5,25 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchStories, Story } from "@/lib/stories";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { CATEGORIES } from "@/constants/categories";
+
 
 export default function DashboardPage() {
     const router = useRouter();
     const [stories, setStories] = useState<Story[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // 카테고리 필터링을 위한 state
+    // default value 는 "All"
+    const ALL = "All" as const;
+    // 선택된 카테고리를 관리하는 state 
+    // 유저가 카테고리 버튼클릭 -> selectedCategory 업데이트 -> useMemo 호출 -> stories 필터링 
+    const [selectedCategory, setSelectedCategory] = useState<string>(ALL);
 
     useEffect(() => {
         async function load() {
@@ -45,6 +54,15 @@ export default function DashboardPage() {
 
         load();
     }, []);
+
+    // 카테고리 필터링 로직
+    const filteredStories = useMemo(() => {
+      if (selectedCategory === ALL) return stories;
+      return stories.filter((s) => s.categories.includes(selectedCategory));
+    }, [stories, selectedCategory]);
+
+    const hasAnyStories = stories.length > 0; // 원본 데이터
+    const hasFilteredStories = filteredStories.length > 0;
 
     return (
       <main style={{ marginTop: 32 }}>
@@ -85,13 +103,44 @@ export default function DashboardPage() {
 
         {loading && <p className="muted" style={{ marginTop: 18 }}>Loading stories...</p>}
 
+        {!loading && !error && (
+          <div style={{ marginTop: 18 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {[ALL, ...CATEGORIES].map((cat) => {
+                const selected = selectedCategory === cat;
+
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    className ={`chip ${selected ? "chip-selected" : ""}`}
+                    onClick={() => setSelectedCategory(cat)}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+
+            <p className="muted" style={{ marginTop: 10, marginBottom: 0, fontSize: 13 }}>
+
+              Showing{""}
+              <b>
+                {selectedCategory === ALL ? "all stories" : `stories in the "${selectedCategory}" category`}
+              </b>{""}
+              ({filteredStories.length}) stories
+            </p>
+          </div>
+        )}
+
         {error && (
           <div className="card" style={{ marginTop: 18, borderColor: "rgba(220, 38, 38, 0.35)" }}>
             <p style={{ color: "crimson", margin: 0 }}>Error: {error}</p>
           </div>
         )}
 
-        {!loading && !error && stories.length === 0 && (
+        {/* 아직 스토리가 없는 경우 */}
+        {!loading && !error && !hasAnyStories && (
           <div className="card" style={{ marginTop: 18 }}>
             <p style={{ margin: 0 }}>No stories yet.</p>
             <p className="muted" style={{ marginTop: 6, marginBottom: 0 }}>
@@ -100,7 +149,27 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {!loading && !error && stories.length > 0 && (
+        {/* story 는 있는데, 필터링 결과가 없는 경우 */}
+        {!loading && !error && hasAnyStories && !hasFilteredStories && (
+          <div className="card" style={{ marginTop: 18 }}>
+            <p style={{ margin: 0 }}>No stories found for the selected category.</p>
+            <p className="muted" style={{ marginTop: 6, marginBottom: 0 }}>
+              Try selecting <strong>All</strong> or a different category.
+            </p>
+
+            <div style={{ marginTop: 18 }}>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setSelectedCategory(ALL)}
+              >
+                Show All Stories
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && hasFilteredStories && (
           <ul
             style={{
               marginTop: 18,
@@ -110,32 +179,14 @@ export default function DashboardPage() {
               listStyle: "none",
             }}
           >
-            {stories.map((s) => (
+            {filteredStories.map((s) => (
               <li key={s.id} className="card" style={{ display: "grid", gap: 10 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                  <div style={{ minWidth: 0 }}>
-                    <Link
-                      href={`/stories/${s.id}`}
-                      style={{ textDecoration: "none" }}
-                    >
+                  <div>
+                    <Link href={`/stories/${s.id}`} style={{ textDecoration: "none" }}>
                       <span style={{ fontWeight: 800, fontSize: 18 }}>{s.title}</span>
                     </Link>
-                    <div className="muted" style={{ fontSize: 13, marginTop: 6 }}>
-                      {new Date(s.createdAt).toLocaleDateString()}
-                    </div>
                   </div>
-
-                  <Link href={`/stories/${s.id}`} style={{ textDecoration: "none" }}>
-                    <span className="btn">View</span>
-                  </Link>
-                </div>
-
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {s.categories.map((c) => (
-                    <span key={c} className="badge">
-                      {c}
-                    </span>
-                  ))}
                 </div>
               </li>
             ))}
