@@ -124,11 +124,11 @@ export default function DashboardPage() {
 
             <p className="muted" style={{ marginTop: 10, marginBottom: 0, fontSize: 13 }}>
 
-              Showing{""}
+              Showing{" "}
               <b>
                 {selectedCategory === ALL ? "all stories" : `stories in the "${selectedCategory}" category`}
               </b>{""}
-              ({filteredStories.length}) stories
+              ({filteredStories.length}) 
             </p>
           </div>
         )}
